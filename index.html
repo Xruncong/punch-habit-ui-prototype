@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>打卡提醒 App · UI 原型</title>
+<style>
+  :root{
+    --primary:#5B5BD6; --primary-soft:#EDEDFB; --primary-container:#E4E0FF;
+    --bg:#F7F8FC; --card:#FFFFFF; --ink:#1B1B28; --ink2:#6E6E80;
+    --line:#ECECF3; --green:#3BA776; --green-soft:#E3F5EC;
+    --amber:#C98A2B; --amber-soft:#FBF0DC; --shadow:0 10px 30px rgba(40,40,90,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:linear-gradient(135deg,#EEF1FB,#F7F4FB);color:var(--ink);padding:36px 20px 60px}
+  h1{text-align:center;font-size:22px;font-weight:700;letter-spacing:.5px}
+  .sub{text-align:center;color:var(--ink2);font-size:13px;margin:8px 0 34px}
+  .stage{display:flex;gap:34px;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+  .frame-wrap{display:flex;flex-direction:column;align-items:center;gap:12px}
+  .label{font-size:13px;color:var(--ink2);font-weight:600}
+  .phone{width:280px;height:580px;background:var(--bg);border-radius:38px;border:8px solid #22222E;box-shadow:var(--shadow);overflow:hidden;position:relative;display:flex;flex-direction:column}
+  .statusbar{height:30px;display:flex;justify-content:space-between;align-items:center;padding:0 20px;font-size:11px;font-weight:600;color:var(--ink);flex:none}
+  .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:74px;height:16px;background:#22222E;border-radius:10px;z-index:5}
+  .screen{flex:1;overflow:hidden;position:relative}
+  .s1 .top{padding:14px 20px 6px}
+  .date{font-size:24px;font-weight:800}
+  .weekday{color:var(--ink2);font-size:12px;margin-top:2px}
+  .daybadge{display:inline-flex;align-items:center;gap:5px;margin-top:10px;background:var(--green-soft);color:var(--green);font-size:11px;font-weight:700;padding:5px 11px;border-radius:20px}
+  .daybadge .dot{width:6px;height:6px;background:var(--green);border-radius:50%}
+  .daybadge.holiday{background:var(--amber-soft);color:var(--amber)}
+  .daybadge.holiday .dot{background:var(--amber)}
+  .cards{padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+  .hcard{background:var(--card);border-radius:22px;padding:16px;box-shadow:0 4px 14px rgba(40,40,90,.06);position:relative;transition:.3s}
+  .hcard .ic{width:40px;height:40px;border-radius:13px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:19px;float:left;margin-right:12px}
+  .hcard .meta{overflow:hidden}
+  .hcard .ttl{font-size:15px;font-weight:700}
+  .hcard .tm{font-size:11px;color:var(--ink2);margin-top:3px}
+  .hcard .btn{clear:both;margin-top:14px;width:100%;height:40px;border:none;border-radius:13px;background:var(--primary);color:#fff;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:.3s}
+  .hcard .btn.done{background:var(--green-soft);color:var(--green)}
+  .hcard.done{background:linear-gradient(135deg,#F4FBF7,#fff)}
+  .fab{position:absolute;right:18px;bottom:22px;width:52px;height:52px;border-radius:18px;background:var(--primary);color:#fff;font-size:28px;font-weight:300;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(91,91,214,.4)}
+  .nav{position:absolute;bottom:0;left:0;right:0;height:56px;background:rgba(255,255,255,.92);border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center}
+  .nav div{font-size:10px;color:var(--ink2);text-align:center}
+  .nav div.on{color:var(--primary);font-weight:700}
+  .nav .ni{font-size:17px;display:block;margin-bottom:2px}
+  .s1 .cards{padding-bottom:66px}
+  .s2 .hd{padding:14px 20px 4px;display:flex;align-items:center;gap:10px}
+  .s2 .hd .back{font-size:20px;color:var(--primary)}
+  .s2 .hd .t{font-size:16px;font-weight:700}
+  .s2 .sec{padding:12px 20px}
+  .field-label{font-size:11px;color:var(--ink2);font-weight:600;margin-bottom:8px}
+  .nameinput{height:42px;background:var(--card);border-radius:13px;display:flex;align-items:center;padding:0 14px;font-size:13px;color:var(--ink);box-shadow:0 2px 8px rgba(40,40,90,.04)}
+  .timebox{background:var(--card);border-radius:20px;height:96px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(40,40,90,.06);margin-bottom:6px}
+  .time{font-size:40px;font-weight:800;letter-spacing:1px}
+  .time .colon{color:var(--primary);animation:blink 1.2s infinite}
+  @keyframes blink{50%{opacity:.3}}
+  .chips{display:flex;gap:8px}
+  .chip{flex:1;height:36px;border-radius:12px;background:var(--card);border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--ink2)}
+  .chip.sel{background:var(--primary);color:#fff;border-color:var(--primary)}
+  .toggles{background:var(--card);border-radius:18px;padding:4px 14px;box-shadow:0 2px 8px rgba(40,40,90,.04)}
+  .trow{display:flex;align-items:center;justify-content:center;height:44px;border-bottom:1px solid var(--line);font-size:13px;font-weight:600}
+  .trow:last-child{border-bottom:none}
+  .sw{width:38px;height:22px;border-radius:12px;background:var(--primary);position:relative;margin-left:12px}
+  .sw::after{content:"";position:absolute;right:3px;top:3px;width:16px;height:16px;background:#fff;border-radius:50%}
+  .sw.off{background:#D4D4E0}
+  .sw.off::after{right:auto;left:3px}
+  .save{position:absolute;left:20px;right:20px;bottom:22px;height:46px;background:var(--primary);color:#fff;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;box-shadow:0 8px 18px rgba(91,91,214,.35)}
+  .s3{background:linear-gradient(180deg,#DCE3F5,#EEF1FB)}
+  .lock{text-align:center;padding-top:40px;color:#5A6076}
+  .lock .t{font-size:34px;font-weight:300}
+  .lock .d{font-size:12px;margin-top:4px;opacity:.7}
+  .notif{margin:26px 14px 0;background:rgba(255,255,255,.96);border-radius:22px;padding:16px;box-shadow:0 10px 30px rgba(40,40,90,.16)}
+  .nhead{display:flex;align-items:center;gap:10px}
+  .napp{width:34px;height:34px;border-radius:11px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px}
+  .nname{font-size:12px;font-weight:700}
+  .ntime{margin-left:auto;font-size:11px;color:var(--ink2)}
+  .ntitle{font-size:15px;font-weight:700;margin:12px 0 3px}
+  .nbody{font-size:12px;color:var(--ink2)}
+  .nactions{display:flex;gap:8px;margin-top:14px}
+  .nbtn{flex:1;height:38px;border-radius:12px;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .nbtn.ok{background:var(--primary-soft);color:var(--primary)}
+  .nbtn.later{background:#F1F1F6;color:var(--ink2)}
+  .hint{margin:22px 18px 0;font-size:11px;color:#5A6076;line-height:1.7}
+  .hint b{color:var(--primary)}
+</style>
+</head>
+<body>
+<h1>打卡提醒 App · UI 高保真原型</h1>
+<p class="sub">Material 3 · 极简 · 上下班打卡 + 习惯记录</p>
+<div class="stage">
+  <div class="frame-wrap">
+    <div class="label">① 首页 · 今日打卡</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="statusbar"><span>9:41</span><span>📶 🔋</span></div>
+      <div class="screen s1">
+        <div class="top">
+          <div class="date">11月25日</div>
+          <div class="weekday">星期二 · 农历十月十五</div>
+          <div class="daybadge"><span class="dot"></span>工作日 · 正常上班</div>
+        </div>
+        <div class="cards">
+          <div class="hcard">
+            <div class="ic">🌅</div>
+            <div class="meta"><div class="ttl">上班打卡</div><div class="tm">提醒 09:00 · 工作日</div></div>
+            <button class="btn">✓ 打卡</button>
+          </div>
+          <div class="hcard">
+            <div class="ic">🌆</div>
+            <div class="meta"><div class="ttl">下班打卡</div><div class="tm">提醒 18:30 · 工作日</div></div>
+            <button class="btn">✓ 打卡</button>
+          </div>
+          <div class="hcard done">
+            <div class="ic">📖</div>
+            <div class="meta"><div class="ttl">阅读 30 分钟</div><div class="tm">提醒 21:00 · 每天</div></div>
+            <button class="btn done">✓ 已完成</button>
+          </div>
+        </div>
+        <div class="fab">＋</div>
+        <div class="nav">
+          <div class="on"><span class="ni">🏠</span>今日</div>
+          <div><span class="ni">📊</span>统计</div>
+          <div><span class="ni">⚙️</span>设置</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="frame-wrap">
+    <div class="label">② 新建提醒 · 4 步完成</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="statusbar"><span>9:41</span><span>📶 🔋</span></div>
+      <div class="screen s2">
+        <div class="hd"><span class="back">‹</span><span class="t">新建提醒</span></div>
+        <div class="sec">
+          <div class="field-label">名称</div>
+          <div class="nameinput">上班打卡</div>
+        </div>
+        <div class="sec">
+          <div class="field-label">提醒时间</div>
+          <div class="timebox"><span class="time">09<span class="colon">:</span>00</span></div>
+        </div>
+        <div class="sec">
+          <div class="field-label">重复</div>
+          <div class="chips">
+            <div class="chip">每天</div>
+            <div class="chip sel">工作日</div>
+            <div class="chip">周末</div>
+          </div>
+        </div>
+        <div class="sec">
+          <div class="field-label">节假日一键设置</div>
+          <div class="toggles">
+            <div class="trow">工作日自动排除节假日<div class="sw"></div></div>
+            <div class="trow">周末提醒<div class="sw off"></div></div>
+            <div class="trow">节假日照常提醒<div class="sw off"></div></div>
+          </div>
+        </div>
+        <div class="save">保存提醒</div>
+      </div>
+    </div>
+  </div>
+  <div class="frame-wrap">
+    <div class="label">③ 通知直达 · 免开 App</div>
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="statusbar"><span>9:00</span><span>📶 🔋</span></div>
+      <div class="screen s3">
+        <div class="lock"><div class="t">9:00</div><div class="d">11月25日 星期二</div></div>
+        <div class="notif">
+          <div class="nhead"><div class="napp">✓</div><div class="nname">打卡提醒</div><div class="ntime">现在</div></div>
+          <div class="ntitle">该上班打卡啦 🌅</div>
+          <div class="nbody">上班打卡 · 提醒时间 09:00</div>
+          <div class="nactions">
+            <div class="nbtn ok">✓ 打卡</div>
+            <div class="nbtn later">稍后提醒</div>
+          </div>
+        </div>
+        <div class="hint">点「<b>✓ 打卡</b>」直接记录完成，<b>无需打开 App</b>；当天已打卡则不再提醒。需开启通知与精确闹钟权限。</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
